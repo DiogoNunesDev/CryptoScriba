@@ -16,7 +16,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
             email=validated_data['email'],
-            name=validated_data['full_name'],
+            full_name=validated_data['full_name'],
             password=validated_data['password']
         )
         if not user.is_staff:  # Create a wallet only if the user is not an admin
