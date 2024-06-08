@@ -29,4 +29,4 @@ class WalletUpdateView(generics.UpdateAPIView):
 class WalletListView(generics.ListAPIView):
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]

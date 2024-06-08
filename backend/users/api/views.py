@@ -1,7 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from django.contrib.auth import authenticate
 from ..models import CustomUser
 from .serializers import UserSerializer, RegisterSerializer
@@ -48,6 +48,7 @@ class LogoutView(APIView):
 class UserDetailView(generics.RetrieveAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
@@ -55,4 +56,4 @@ class UserDetailView(generics.RetrieveAPIView):
 class NonStaffUserListView(generics.ListAPIView):
     queryset = CustomUser.objects.filter(is_staff=False)
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminUser]

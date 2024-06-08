@@ -3,9 +3,18 @@ from ..models import CustomUser
 from wallets.models import Wallet
 
 class UserSerializer(serializers.ModelSerializer):
+    isAdmin = serializers.SerializerMethodField()
+    isAuthenticated = serializers.SerializerMethodField()
+
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'full_name', 'last_login', 'date_joined', 'wallet']
+        fields = ['id', 'email', 'full_name', 'last_login', 'date_joined', 'wallet', 'isAdmin', 'isAuthenticated']
+
+    def get_isAdmin(self, obj):
+        return obj.is_staff
+
+    def get_isAuthenticated(self, obj):
+        return obj.is_authenticated
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
