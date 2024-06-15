@@ -13,7 +13,7 @@ function SignInPage() {
       justifyContent: "center",
       alignItems: "center",
       height: "100vh",
-      backgroundColor: "#0F172A", // Dark blue background
+      backgroundColor: "#142636", // Dark blue background
       position: "relative",
       overflow: "hidden",
     },
@@ -39,7 +39,7 @@ function SignInPage() {
       width: "70%",
       height: "100%",
       borderRadius: 1000,
-      backgroundColor: "#1E293B", // Slightly lighter dark blue circle
+      backgroundColor: "#273744", // Slightly lighter dark blue circle
       display: "flex",
       justifyContent: "flex-end",
       alignItems: "center",
