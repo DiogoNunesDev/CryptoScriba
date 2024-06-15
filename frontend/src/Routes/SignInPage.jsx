@@ -1,6 +1,12 @@
 import Login from "../components/Login";
 import logo from '../assets/CryptoScriba_.png';
+import { Link, useNavigate } from "react-router-dom";
 function SignInPage() {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate("/signup");
+}
+
   const styles = {
     container: {
       display: "flex",
@@ -48,8 +54,10 @@ function SignInPage() {
         <div style={styles.text}>Welcome back!</div>
       </div>
       <img style={styles.heading} src={logo} alt="Logo" />
-
+    <div style={{display: 'flex', flexDirection:'column', alignItems:'center'}}>
     <Login/>
+    <a style={{color:'white', cursor:'pointer', marginTop:10,fontFamily:'verdana'}} onClick={handleClick}>Dont have an account? SIGN UP</a>
+    </div>
     </div>
   );
 }
