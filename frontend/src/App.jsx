@@ -10,7 +10,6 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-
   return (
     <BrowserRouter>
       <div>

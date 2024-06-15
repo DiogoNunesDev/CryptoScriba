@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api/users/';
+const API_URL = 'http://localhost:8000/api/';
 
 export const register = (email, full_name, password) => {
-  return axios.post(API_URL + 'register/', {
+  return axios.post(API_URL + 'users/register/', {
     email,
     full_name,
     password
@@ -11,7 +11,7 @@ export const register = (email, full_name, password) => {
 };
 
 export const login = (email, password) => {
-  return axios.post(API_URL + 'login/', {  // Use the custom login view
+  return axios.post(API_URL + 'users/login/', {  // Use the custom login view
     email,
     password
   });
@@ -19,7 +19,7 @@ export const login = (email, password) => {
 
 export const verifyOTP = (otp_token) => {
   const accessToken = localStorage.getItem('access');
-  return axios.post(API_URL + 'totp/verify/', {
+  return axios.post(API_URL + 'users/totp/verify/', {
     otp_token
   }, {
     headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -28,14 +28,14 @@ export const verifyOTP = (otp_token) => {
 
 export const setupMFA = () => {
   const accessToken = localStorage.getItem('access');
-  return axios.get(API_URL + 'totp/setup/', {
+  return axios.get(API_URL + 'users/totp/setup/', {
     headers: { 'Authorization': `Bearer ${accessToken}` }
   });
 };
 
 
 export const logout = (refreshToken) => {
-  return axios.post(API_URL + 'logout/', {
+  return axios.post(API_URL + 'users/logout/', {
     refresh: refreshToken
   });
 };
