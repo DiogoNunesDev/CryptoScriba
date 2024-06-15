@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions
 from ..models import Wallet
 from .serializers import WalletSerializer
-from ...logs.utils import log_wallet_creation, log_wallet_update
+from logs.utils import log_wallet_creation, log_wallet_update
 
 class WalletCreateView(generics.CreateAPIView):
     queryset = Wallet.objects.all()

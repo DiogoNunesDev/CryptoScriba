@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions
 from ..models import Transaction
 from .serializers import TransactionSerializer
-from ...logs.utils import log_transaction_creation
+from logs.utils import log_transaction_creation
 
 class TransactionCreateView(generics.CreateAPIView):
     queryset = Transaction.objects.all()

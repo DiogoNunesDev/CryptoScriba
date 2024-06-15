@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from ..models import Coin
 from .serializers import CoinSerializer
-from ...logs.utils import log_coin_addition, log_coin_deletion
+from logs.utils import log_coin_addition, log_coin_deletion
 
 class CoinCreateView(generics.CreateAPIView):
     queryset = Coin.objects.all()

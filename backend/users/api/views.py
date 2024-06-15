@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate
 from ..models import CustomUser
 from .serializers import TOTPSetupSerializer, TOTPVerifySerializer, UserSerializer, RegisterSerializer
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
-from ...logs.utils import log_user_registration, log_user_login, log_failed_login_attempt, log_user_logout
+from logs.utils import log_user_registration, log_user_login, log_failed_login_attempt, log_user_logout
 
 import logging
 

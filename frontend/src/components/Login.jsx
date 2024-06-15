@@ -1,28 +1,36 @@
-import React, { useState } from "react";
-import { login, setupMFA, verifyOTP } from "../services/auth"; 
-import { useNavigate } from "react-router-dom"; 
-import QRCode from 'qrcode.react'; 
+import React, { useEffect, useState } from "react";
+import { login, setupMFA, verifyOTP } from "../services/auth";
+import { useNavigate } from "react-router-dom";
+import QRCode from "qrcode.react";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [otpToken, setOtpToken] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [otpToken, setOtpToken] = useState("");
   const [mfaRequired, setMfaRequired] = useState(false);
-  const [qrCodeUri, setQrCodeUri] = useState('');
-  const [message, setMessage] = useState('');
+  const [qrCodeUri, setQrCodeUri] = useState("");
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("access")) {
+      navigate("/home");
+    }
+  });
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await login(email, password);
-      if (response.data.mfa_required) {
+      console.log("yo", response.data);
+      if (response.data.mfa_required || !response.data.user.isAdmin) {
         setMfaRequired(true);
-        setMessage('MFA required. Please enter your OTP token.');
+        setMessage("MFA required. Please enter your OTP token.");
         // Store tokens in local storage
-        localStorage.setItem('user_id', response.data.user_id);
-        localStorage.setItem('access', response.data.access);
-        localStorage.setItem('refresh', response.data.refresh);
+        localStorage.setItem("user_id", response.data.user_id);
+        localStorage.setItem("is_staff", false);
+        localStorage.setItem("access", response.data.access);
+        localStorage.setItem("refresh", response.data.refresh);
 
         try {
           const mfaResponse = await setupMFA();
@@ -30,22 +38,31 @@ const Login = () => {
             setQrCodeUri(mfaResponse.data.otp_uri);
           }
         } catch (setupError) {
-          if (setupError.response && setupError.response.data.detail === 'MFA already configured') {
+          if (
+            setupError.response &&
+            setupError.response.data.detail === "MFA already configured"
+          ) {
             // MFA is already configured, proceed without setting up again
-            setQrCodeUri('');
+            setQrCodeUri("");
           } else {
             throw setupError;
           }
         }
       } else {
-        localStorage.setItem('access', response.data.access);
-        localStorage.setItem('refresh', response.data.refresh);
-        alert('Login successful!');
-        navigate('/dashboard');
+        localStorage.setItem("access", response.data.access);
+        localStorage.setItem("is_staff", response.data.user.isAdmin);
+        localStorage.setItem("refresh", response.data.refresh);
+        alert("Login successful!");
+        console.log();
+        if (response.data.user.isAdmin) {
+          navigate("/backrooms");
+        } else {
+          navigate("/home");
+        }
       }
     } catch (error) {
-      alert('Login failed!');
-      console.error('Login error:', error.response.data);
+      alert("Login failed!");
+      console.error("Login error:");
     }
   };
 
@@ -53,13 +70,13 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await verifyOTP(otpToken);
-      localStorage.setItem('access', response.data.access);
-      localStorage.setItem('refresh', response.data.refresh);
-      alert('Login successful!');
-      navigate('/dashboard');
+      localStorage.setItem("access", response.data.access);
+      localStorage.setItem("refresh", response.data.refresh);
+      alert("Login successful!");
+      navigate("/home");
     } catch (error) {
-      alert('OTP verification failed!');
-      console.error('OTP verification error:', error.response.data);
+      alert("OTP verification failed!");
+      console.error("OTP verification error:", error.response.data);
     }
   };
 
@@ -143,7 +160,7 @@ const Login = () => {
             padding: 20,
           }}
         >
-          <p>{message}</p>
+          <p style={{ fontSize: "3rem" }}>{message}</p>
           {qrCodeUri && (
             <div style={{ marginBottom: 20 }}>
               <QRCode value={qrCodeUri} />
@@ -166,9 +183,10 @@ const Login = () => {
                 borderWidth: 5,
                 borderStyle: "solid",
                 paddingLeft: 10,
-                color: "black",
+                color: "white",
+
                 borderRadius: 20,
-                backgroundColor: "TRANSPARENT",
+                backgroundColor: "#142636",
                 fontSize: "1.5rem",
               }}
               type="text"
