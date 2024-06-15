@@ -11,11 +11,28 @@ export const register = (email, full_name, password) => {
 };
 
 export const login = (email, password) => {
-  return axios.post(API_URL + 'login/', {
+  return axios.post(API_URL + 'login/', {  // Use the custom login view
     email,
     password
   });
 };
+
+export const verifyOTP = (otp_token) => {
+  const accessToken = localStorage.getItem('access');
+  return axios.post(API_URL + 'totp/verify/', {
+    otp_token
+  }, {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+};
+
+export const setupMFA = () => {
+  const accessToken = localStorage.getItem('access');
+  return axios.get(API_URL + 'totp/setup/', {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+};
+
 
 export const logout = (refreshToken) => {
   return axios.post(API_URL + 'logout/', {
@@ -23,8 +40,9 @@ export const logout = (refreshToken) => {
   });
 };
 
-export const getCurrentUser = (token) => {
+export const getCurrentUser = () => {
+  const accessToken = localStorage.getItem('access');
   return axios.get(API_URL + 'me/', {
-    headers: { 'Authorization': `Bearer ${token}` }
+    headers: { 'Authorization': `Bearer ${accessToken}` }
   });
 };
