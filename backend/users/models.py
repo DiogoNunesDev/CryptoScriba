@@ -1,25 +1,19 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
-from wallets.models import Wallet
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, full_name, password=None, **extra_fields):
-        """
-        Create and save a User with the given email, full name, and password.
-        """
         if not email:
             raise ValueError('Users must have an email address')
         email = self.normalize_email(email)
-        user = self.model(email=email, full_name=full_name, **extra_fields)  # Correct usage of self.model
+        user = self.model(email=email, full_name=full_name, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
     def create_superuser(self, email, full_name, password=None, **extra_fields):
-        """
-        Create and save a Superuser with the given email and password.
-        """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -36,8 +30,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     full_name = models.CharField(max_length=255)
     last_login = models.DateTimeField(blank=True, null=True)
     date_joined = models.DateTimeField(default=timezone.now)
-    wallet = models.OneToOneField(Wallet, on_delete=models.CASCADE, null=True, blank=True)
-
+    wallet = models.OneToOneField('wallets.Wallet', on_delete=models.CASCADE, null=True, blank=True, related_name='user_wallet')
+    is_mfa_enabled = models.BooleanField(default=False)
+    otp_device = models.OneToOneField(TOTPDevice, on_delete=models.SET_NULL, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 

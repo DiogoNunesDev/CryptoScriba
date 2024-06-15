@@ -1,6 +1,14 @@
 from rest_framework import serializers
 from ..models import CustomUser
 from wallets.models import Wallet
+from django_otp.plugins.otp_totp.models import TOTPDevice
+
+class TOTPSetupSerializer(serializers.Serializer):
+    otp_secret = serializers.CharField()
+    otp_uri = serializers.CharField()
+
+class TOTPVerifySerializer(serializers.Serializer):
+    otp_token = serializers.CharField()
 
 class UserSerializer(serializers.ModelSerializer):
     isAdmin = serializers.SerializerMethodField()
@@ -8,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'full_name', 'last_login', 'date_joined', 'wallet', 'isAdmin', 'isAuthenticated']
+        fields = ['id', 'email', 'full_name', 'last_login', 'date_joined', 'wallet', 'isAdmin', 'isAuthenticated', 'is_mfa_enabled']
 
     def get_isAdmin(self, obj):
         return obj.is_staff
@@ -28,6 +36,12 @@ class RegisterSerializer(serializers.ModelSerializer):
             full_name=validated_data['full_name'],
             password=validated_data['password']
         )
-        if not user.is_staff:  # Create a wallet only if the user is not an admin
-            Wallet.objects.create(user=user)
+        Wallet.objects.create(user=user)  # Create a wallet for the newly created user
+        
+        # Enable MFA and create OTP device
+        user.is_mfa_enabled = True
+        device = TOTPDevice.objects.create(user=user, confirmed=False)
+        user.otp_device = device
+        user.save()
+        
         return user
