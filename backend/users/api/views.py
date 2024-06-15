@@ -8,6 +8,8 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.contrib.auth import authenticate
 from ..models import CustomUser
 from .serializers import TOTPSetupSerializer, TOTPVerifySerializer, UserSerializer, RegisterSerializer
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from ...logs.utils import log_user_registration, log_user_login, log_failed_login_attempt, log_user_logout
 
 import logging
 
@@ -17,9 +19,15 @@ class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+    
+    def perform_create(self, serializer):
+        user = serializer.save()
+        log_user_registration(user)
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
+
 
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
@@ -29,6 +37,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         if user is not None:
             if user.is_mfa_enabled:
                 refresh = RefreshToken.for_user(user)
+                log_user_login(user)
                 return Response({
                     "mfa_required": True,
                     "user_id": user.id,
@@ -37,12 +46,13 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 }, status=status.HTTP_200_OK)
             else:
                 refresh = RefreshToken.for_user(user)
+                log_user_login(user)
                 return Response({
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
                     'user': UserSerializer(user).data
                 }, status=status.HTTP_200_OK)
-
+        log_failed_login_attempt(email)
         return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -101,6 +111,7 @@ class LogoutView(APIView):
             refresh_token = request.data["refresh"]
             token = RefreshToken(refresh_token)
             token.blacklist()
+            log_user_logout(request.user)
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
