@@ -1,12 +1,13 @@
 import React from 'react';
 import Header from '../components/Header';
 
-const Balance = () => {
+const CoinsAdmin = () => {
   return (
     <>
       <Header />
       <div style={styles.container}>
-        <h1>Balance</h1>
+        <h1>Admin Coins</h1>
+        <p>Manage admin-specific coins here.</p>
       </div>
     </>
   );
@@ -24,4 +25,4 @@ const styles = {
   },
 };
 
-export default Balance;
+export default CoinsAdmin;

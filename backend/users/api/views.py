@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate
 from ..models import CustomUser
 from .serializers import TOTPSetupSerializer, TOTPVerifySerializer, UserSerializer, RegisterSerializer
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
-from logs.utils import log_user_registration, log_user_login, log_failed_login_attempt, log_user_logout
+from logs.utils import log_user_registration, log_user_login, log_failed_login_attempt, log_user_logout, log_failed_OTP_attempt
 
 import logging
 
@@ -39,10 +39,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 refresh = RefreshToken.for_user(user)
                 log_user_login(user)
                 return Response({
-                    "mfa_required": True,
-                    "user_id": user.id,
+                    "user": UserSerializer(user).data,
                     "access": str(refresh.access_token),
-                    "refresh": str(refresh),
+                    "refresh": str(refresh)
                 }, status=status.HTTP_200_OK)
             else:
                 refresh = RefreshToken.for_user(user)
@@ -77,7 +76,8 @@ class TOTPVerifyView(APIView):
                 'access': str(refresh.access_token),
                 'user': UserSerializer(user).data
             }, status=status.HTTP_200_OK)
-
+            
+        log_failed_OTP_attempt(user.email)
         return Response({"detail": "Invalid OTP token"}, status=status.HTTP_400_BAD_REQUEST)
 
 class TOTPSetupView(APIView):

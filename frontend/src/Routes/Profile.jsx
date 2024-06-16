@@ -1,12 +1,13 @@
 import React from 'react';
 import Header from '../components/Header';
 
-const Balance = () => {
+const Profile = () => {
   return (
     <>
       <Header />
       <div style={styles.container}>
-        <h1>Balance</h1>
+        <h1>Profile</h1>
+        <p>User profile</p>
       </div>
     </>
   );
@@ -24,4 +25,4 @@ const styles = {
   },
 };
 
-export default Balance;
+export default Profile;

@@ -11,7 +11,7 @@ export const register = (email, full_name, password) => {
 };
 
 export const login = (email, password) => {
-  return axios.post(API_URL + 'users/login/', {  // Use the custom login view
+  return axios.post(API_URL + 'users/login/', {  
     email,
     password
   });
@@ -34,14 +34,26 @@ export const setupMFA = () => {
 };
 
 export const logout = (refreshToken) => {
+  const accessToken = localStorage.getItem('access');
   return axios.post(API_URL + 'users/logout/', {
     refresh: refreshToken
+  }, {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
   });
 };
 
 export const getCurrentUser = () => {
   const accessToken = localStorage.getItem('access');
-  return axios.get(API_URL + 'me/', {
+  console.log('Access Token:', accessToken);  
+  return axios.get(API_URL + 'users/me/', {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+};
+
+export const listUsers = () => {
+  const accessToken = localStorage.getItem('access');
+  console.log('Access Token:', accessToken);  
+  return axios.get(API_URL + 'users/', {
     headers: { 'Authorization': `Bearer ${accessToken}` }
   });
 };
@@ -126,3 +138,18 @@ export const listTransactions = () => {
   });
 };
 
+// security
+export const backupDatabase = () => {
+  const accessToken = localStorage.getItem('access');
+  return axios.get(API_URL + 'backup/', {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+};
+
+// logs
+export const logsList = () => {
+  const accessToken = localStorage.getItem('access');
+  return axios.get(API_URL + 'logs/', {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+};

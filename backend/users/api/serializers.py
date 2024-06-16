@@ -36,9 +36,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             full_name=validated_data['full_name'],
             password=validated_data['password']
         )
-        Wallet.objects.create(user=user)  # Create a wallet for the newly created user
+        Wallet.objects.create(user=user)
         
-        # Enable MFA and create OTP device
+        # Enabling MFA and creating OTP device
         user.is_mfa_enabled = True
         device = TOTPDevice.objects.create(user=user, confirmed=False)
         user.otp_device = device

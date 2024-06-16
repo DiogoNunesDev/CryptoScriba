@@ -1,10 +1,18 @@
+import React, { useEffect, useState } from "react";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import SignInPage from "./Routes/SignInPage";
 import SignUpPage from "./Routes/SignUpPage";
 import Balance from "./Routes/Balance";
 import Backrooms from "./Routes/Backrooms";
+import Users from "./Routes/Users";
+import CoinsAdmin from "./Routes/CoinsAdmin";
+import Transactions from "./Routes/Transactions";
+import Logs from "./Routes/Logs";
+import Backup from "./Routes/Backup";
+import CoinsUser from "./Routes/CoinsUser";
+import WalletUser from "./Routes/WalletUser";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
-import { useEffect, useState } from "react";
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import Profile from "./Routes/Profile";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -21,11 +29,7 @@ const App = () => {
           <Route
             path="/home"
             element={
-              <ProtectedRoute
-                isAuthenticated={isAuthenticated}
-                isAdmin={isAdmin}
-                balance
-              >
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <Balance />
               </ProtectedRoute>
             }
@@ -33,12 +37,72 @@ const App = () => {
           <Route
             path="/backrooms"
             element={
-              <ProtectedRoute
-                isAuthenticated={isAuthenticated}
-                isAdmin={isAdmin}
-                adminOnly={true}
-              >
+              <ProtectedRoute isAuthenticated={isAuthenticated} isAdmin={isAdmin} adminOnly={true}>
                 <Backrooms />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated} isAdmin={isAdmin} adminOnly={true}>
+                <Users />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/coins-admin"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated} isAdmin={isAdmin} adminOnly={true}>
+                <CoinsAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transactions"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated} isAdmin={isAdmin} adminOnly={true}>
+                <Transactions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/logs"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated} isAdmin={isAdmin} adminOnly={true}>
+                <Logs />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/backup"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated} isAdmin={isAdmin} adminOnly={true}>
+                <Backup />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/coins"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <CoinsUser />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wallet"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <WalletUser />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <Profile />
               </ProtectedRoute>
             }
           />

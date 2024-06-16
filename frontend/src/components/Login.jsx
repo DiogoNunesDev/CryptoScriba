@@ -12,23 +12,18 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (localStorage.getItem("access")) {
-      navigate("/home");
-    }
-  });
-
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await login(email, password);
-      console.log("yo", response.data);
-      if (response.data.mfa_required || !response.data.user.isAdmin) {
+      console.log("Login response:", response.data);
+      console.log("User object:", response);
+      if (response.data.user.is_mfa_enabled) {
         setMfaRequired(true);
         setMessage("MFA required. Please enter your OTP token.");
         // Store tokens in local storage
-        localStorage.setItem("user_id", response.data.user_id);
-        localStorage.setItem("is_staff", false);
+        localStorage.setItem("user_id", response.data.user.id);
+        localStorage.setItem("is_staff", response.data.user.isAdmin);
         localStorage.setItem("access", response.data.access);
         localStorage.setItem("refresh", response.data.refresh);
 
@@ -50,10 +45,9 @@ const Login = () => {
         }
       } else {
         localStorage.setItem("access", response.data.access);
+        localStorage.setItem("user_id", response.data.user.id);
         localStorage.setItem("is_staff", response.data.user.isAdmin);
         localStorage.setItem("refresh", response.data.refresh);
-        alert("Login successful!");
-        console.log();
         if (response.data.user.isAdmin) {
           navigate("/backrooms");
         } else {
@@ -61,8 +55,7 @@ const Login = () => {
         }
       }
     } catch (error) {
-      alert("Login failed!");
-      console.error("Login error:");
+      console.error("Login error:", error.response ? error.response.data : error);
     }
   };
 
@@ -72,11 +65,14 @@ const Login = () => {
       const response = await verifyOTP(otpToken);
       localStorage.setItem("access", response.data.access);
       localStorage.setItem("refresh", response.data.refresh);
-      alert("Login successful!");
-      navigate("/home");
+      if (response.data.user.isAdmin) {
+        navigate("/backrooms");
+      } else {
+        navigate("/home");
+      }
     } catch (error) {
       alert("OTP verification failed!");
-      console.error("OTP verification error:", error.response.data);
+      console.error("OTP verification error:", error.response ? error.response.data : error);
     }
   };
 

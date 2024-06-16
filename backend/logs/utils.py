@@ -27,8 +27,8 @@ def log_wallet_creation(user, wallet):
 def log_wallet_update(user, wallet):
     log_activity(user, 'WALLET_UPDATE', f'Wallet {wallet.identifier} updated.')
 
-def log_wallet_deletion(user, wallet_id):
-    log_activity(user, 'WALLET_DELETION', f'Wallet {wallet_id} deleted.')
+def log_wallet_deletion(user, wallet):
+    log_activity(user, 'WALLET_DELETION', f'Wallet {wallet.identifier} deleted.')
 
 # Coin Actions
 def log_coin_addition(user, coin):
@@ -37,8 +37,8 @@ def log_coin_addition(user, coin):
 def log_coin_update(user, coin):
     log_activity(user, 'COIN_UPDATE', f'Coin {coin.name} updated.')
 
-def log_coin_deletion(user, coin_id):
-    log_activity(user, 'COIN_DELETION', f'Coin with ID {coin_id} deleted.')
+def log_coin_deletion(user, coin):
+    log_activity(user, 'COIN_DELETION', f'Coin with ID {coin.name} deleted.')
 
 # Administrative Actions
 def log_admin_login(user):
@@ -52,6 +52,11 @@ def log_user_account_deletion(admin, user):
 
 # Security Actions
 def log_failed_login_attempt(email):
+    print(f'Failed login attempt for email {email}.')
+    log_activity(None, 'FAILED_LOGIN_ATTEMPT', f'Failed login attempt for email {email}.')
+    
+def log_failed_OTP_attempt(email):
+    print(f'Failed login attempt for email {email}.')
     log_activity(None, 'FAILED_LOGIN_ATTEMPT', f'Failed login attempt for email {email}.')
 
 # System Actions

@@ -5,4 +5,4 @@ from .serializers import ActivityLogSerializer
 class ActivityLogListView(generics.ListAPIView):
     queryset = ActivityLog.objects.all()
     serializer_class = ActivityLogSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
