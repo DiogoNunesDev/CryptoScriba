@@ -26,14 +26,14 @@ const styles = {
     fontWeight: 600,
   },
   title: {
-    fontSize: '9em',  // Adjust the size as necessary
-    color: '#FFA726',  // The color of "CryptoScriba_"
+    fontSize: '9em',  
+    color: '#FFA726', 
     margin: 0,
   },
   subtitle: {
-    fontSize: '7em',  // Adjust the size as necessary
-    color: 'white',  // The color of "backrooms_"
-    fontFamily: 'monospace',  // Monospace font for "backrooms_"
+    fontSize: '7em',  
+    color: 'white',  
+    fontFamily: 'monospace', 
   },
 };
 

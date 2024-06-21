@@ -95,7 +95,7 @@ class TOTPSetupView(APIView):
         else:
             logger.info(f"Retrieved existing TOTPDevice for user {user.id}")
 
-        otp_secret = device.key  # No need to decode the key
+        otp_secret = device.key 
         otp_uri = device.config_url
 
         logger.debug(f"OTP Secret: {otp_secret}, OTP URI: {otp_uri}")

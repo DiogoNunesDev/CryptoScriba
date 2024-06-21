@@ -20,7 +20,6 @@ class DatabaseBackupView(APIView):
   permission_classes = [IsAuthenticated, IsAdminUser]
 
   def get(self, request, *args, **kwargs):
-    # Generate a key and save it to a file
     key = Fernet.generate_key()
     with open(os.path.join(settings.BASE_DIR, 'backup_key.key'), 'wb') as key_file:
       key_file.write(key)
@@ -32,10 +31,8 @@ class DatabaseBackupView(APIView):
     with open(db_path, 'rb') as file:
       original_data = file.read()
 
-    #Encrypting the data
     encrypted_data = fernet.encrypt(original_data)
 
-    #Saving the encrypted data to a backup file
     backup_path = os.path.join(settings.BASE_DIR, 'db_backup.enc')
     with open(backup_path, 'wb') as backup_file:
       backup_file.write(encrypted_data)
